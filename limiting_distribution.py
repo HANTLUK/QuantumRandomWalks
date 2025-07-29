@@ -85,17 +85,19 @@ def tab_limit_classical():
 
 def tab_limit_quant():
     """
-    Table for plot of symmetric limiting distributions
+    Table for plot of non-symmetric limiting distributions
     """
     num_phis = 10
-    samples = 100
+    samples = 1000
     theta = 0.4*np.pi
-    phiss = [np.flip(np.linspace(0,np.pi/2-theta/2,num_phis)),np.linspace(0,theta/2,num_phis)]
-    xis = [np.pi,0]
+    phiss = [np.linspace(theta/2,np.pi/4+theta/2,num_phis),np.linspace(np.pi/4-theta/2,(np.pi - theta)/2,num_phis)]
+    xis = [0,np.pi]
     limit_dists = [[limit_distr_quantum_param(theta,phi,xi,samples) for phi in phis] for xi,phis in zip(xis,phiss)]
     with io.open(f"Tabs/Quantum_Distribution.dat","w") as file:
+        file.write(str(limit_dists[0][0][0][0]-0.000001) + "\t" + "\t".join(["0.001" for _ in range(2*num_phis+2)])+"\n")
         for i in range(samples):
             file.write(str(limit_dists[0][0][0][i])+"\t"+"\t".join(["\t".join([str(limit_dist[1][i]) for limit_dist in limit_distss]) for limit_distss in limit_dists])+"\n")
+        file.write(str(limit_dists[0][0][0][-1]+0.000001) + "\t" + "\t".join(["0.001" for _ in range(2*num_phis+2)])+"\n")
 
 def plot_distributions():
     """
@@ -126,7 +128,7 @@ def plot_parameters():
     """
     Plot of the unique parametrization of parameters
     """
-    num_thetas = 7
+    num_thetas = 10
     samples = 100
     thetas = np.linspace(0,np.pi/2,num_thetas)
     xis = [0,np.pi]
@@ -136,7 +138,7 @@ def plot_parameters():
         for xi in xis:
             unitary = PW.unitary_param(theta,0,0)
             if xi == 0:
-                phis = np.linspace(0,theta/2,samples)
+                phis = np.linspace(theta/2,np.pi/4+theta/2,samples)
                 states = [PW.psi_param(phi,0) for phi in phis]
                 parameters = [lambda_parameter_coord(theta,phi,xi) for phi in phis]
                 index_max = np.argmax(parameters)
@@ -144,7 +146,7 @@ def plot_parameters():
                 phi_max = phis[index_max]
                 ax.scatter([phi_max],[parameter_max])
             elif xi == np.pi:
-                phis = np.linspace(0,np.pi/2-theta/2,samples)
+                phis = np.linspace(np.pi/4-theta/2,(np.pi - theta)/2,samples)
                 states = [PW.psi_param(phi,np.pi) for phi in phis]
                 parameters = [lambda_parameter_coord(theta,phi,xi) for phi in phis]
                 index_min = np.argmin(parameters)
