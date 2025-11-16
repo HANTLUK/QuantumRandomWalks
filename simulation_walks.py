@@ -78,8 +78,8 @@ def simulation_walk(walk_matrix, initial_state, time, probabilities = probs_quan
 
     def state_probs(state_vec,prob):
         if not animation:
-            prob = np.array(prob[prob>0])
             state_vec = np.array(state_vec[prob > 0])
+            prob = np.array(prob[prob>0])
         else:
             prob = np.array(prob)
             state_vec = np.array(state_vec)
